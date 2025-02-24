@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Firebase</title>
+</head>
+<body>
+    <h1>Teste Simples Firebase</h1>
+    <input type="text" id="inputData" placeholder="Digite algo">
+    <button onclick="sendData()">Enviar para o Firebase</button>
+
+    <!-- Scripts do Firebase com tipo module -->
+    <script type="module">
+        // Importando as funções necessárias do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Sua configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgz_GEgyhfKqoKgkoiG6M1LU04DzhhzzA",
+            authDomain: "mushra-c4902.firebaseapp.com",
+            projectId: "mushra-c4902",
+            storageBucket: "mushra-c4902.firebasestorage.app",
+            messagingSenderId: "630758492117",
+            appId: "1:630758492117:web:c1038ff8af881878365f5c",
+            measurementId: "G-2MJDEHW2K2"
+        };
+
+        // Inicializando o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Tornando a função sendData acessível globalmente
+        window.sendData = function() {
+            const inputValue = document.getElementById("inputData").value;
+            if (inputValue) {
+                addDoc(collection(db, "testCollection"), {
+                    testData: inputValue,
+                    timestamp: new Date()
+                })
+                .then(() => {
+                    alert("Dados enviados com sucesso!");
+                })
+                .catch((error) => {
+                    console.error("Erro ao enviar dados: ", error);
+                    alert("Falha ao enviar dados.");
+                });
+            } else {
+                alert("Por favor, digite algo.");
+            }
+        };
+    </script>
+</body>
+</html>
