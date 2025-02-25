@@ -117,15 +117,44 @@
         <input type="number" id="age" required>
         <br><br>
 
-        <button type="button" onclick="submitFinalization()">Concluir</button>
+        <button type="button" onclick="showResults()">Verificar Avaliação</button>
+        <button type="button" id="submitBtn" onclick="submitFinalization()" style="display:none;">Confirmar e Concluir</button>
     </form>
 
+    <div id="results" style="display:none;">
+        <h2>Resumo das Avaliações</h2>
+        <table border="1">
+            <tbody id="resultsBody"></tbody>    
+        </table>
+    </div>
+
+    <script>
+        window.showResults = function() {
+            const evaluations = getEvaluations().map(e => e.score);
+            const resultsBody = document.getElementById("resultsBody");
+            resultsBody.innerHTML = "";
+            
+            let tableHTML = "";
+            for (let i = 0; i < evaluations.length; i += 6) {
+                tableHTML += "<tr>";
+                for (let j = 0; j < 6; j++) {
+                    if (i + j < evaluations.length) {
+                        tableHTML += `<td>${evaluations[i + j]}</td>`;
+                    }
+                }
+                tableHTML += "</tr>";
+            }
+            
+            resultsBody.innerHTML = tableHTML;
+            document.getElementById("results").style.display = "block";
+            document.getElementById("submitBtn").style.display = "inline";
+        };
+    </script>
+
     <script type="module">
-        // Função para enviar os dados para o Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     
-        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDgz_GEgyhfKqoKgkoiG6M1LU04DzhhzzA",
             authDomain: "mushra-c4902.firebaseapp.com",
@@ -136,63 +165,71 @@
             measurementId: "G-2MJDEHW2K2"
         };
     
-        // Inicializar o Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
     
-        // Função para enviar todos os dados para o Firebase
-        window.submitFinalization = function() {
-        const name = document.getElementById("name").value;
-        const age = document.getElementById("age").value;
-
-        // Função para obter as avaliações de um conjunto de áudios
-        function getEvaluations(audioIds) {
-            const evaluations = [];
-            audioIds.forEach((id) => {
-                const value = localStorage.getItem(id);
-                if (value !== null) {
-                    evaluations.push({ audio: id, score: value });
-                }
-            });
-            return evaluations;
-        }
-
-        // IDs para avaliação 1 até 2
         const audioIds = [
-            ["KNN", "LVC", "Original", "TRIAAN", "WAV2VEC", "Whisper"], // Avaliação 1
-            ["KNN2", "LVC2", "Original2", "TRIAAN2", "WAV2VEC2", "Whisper2"], // Avaliação 2
-            ["KNN3", "LVC3", "Original3", "TRIAAN3", "WAV2VEC3", "Whisper3"], // Avaliação 3
-            ["KNN4", "LVC4", "Original4", "TRIAAN4", "WAV2VEC4", "Whisper4"], // Avaliação 4
-            ["KNN5", "LVC5", "Original5", "TRIAAN5", "WAV2VEC5", "Whisper5"], // Avaliação 5
-            ["KNN6", "LVC6", "Original6", "TRIAAN6", "WAV2VEC6", "Whisper6"]  // Avaliação 6
+            "KNN", "LVC", "Original", "TRIAAN", "WAV2VEC", "Whisper",
+            "KNN2", "LVC2", "Original2", "TRIAAN2", "WAV2VEC2", "Whisper2",
+            "KNN3", "LVC3", "Original3", "TRIAAN3", "WAV2VEC3", "Whisper3",
+            "KNN4", "LVC4", "Original4", "TRIAAN4", "WAV2VEC4", "Whisper4",
+            "KNN5", "LVC5", "Original5", "TRIAAN5", "WAV2VEC5", "Whisper5",
+            "KNN6", "LVC6", "Original6", "TRIAAN6", "WAV2VEC6", "Whisper6"
         ];
 
-        // Coletar as avaliações para todas as 6 avaliações
-        const allEvaluations = audioIds.flatMap(getEvaluations);
-
-        // Verificar se todos os dados foram preenchidos
-        if (name && age && allEvaluations.length === audioIds.length * 6) {
-            // Enviar os dados para o Firebase
-            addDoc(collection(db, "MUSHRA"), {
-                name: name,
-                age: age,
-                evaluations: allEvaluations,
-                timestamp: new Date()
-            })
-            .then(() => {
-                alert("Dados enviados com sucesso!");
-                window.location.href = "agradecimento.html"; // Redireciona para a página de agradecimento
-            })
-            .catch((error) => {
-                console.error("Erro ao enviar dados: ", error);
-                alert("Falha ao enviar dados.");
-            });
-        } else {
-            alert("Por favor, preencha todos os campos e avalie todos os áudios.");
+        function getEvaluations() {
+            return audioIds.map(id => ({
+                audio: id,
+                score: localStorage.getItem(id) || "N/A"
+            }));
         }
-    };
 
-    </script>
+        window.showResults = function() {
+            const evaluations = getEvaluations().map(e => e.score);
+            const resultsBody = document.getElementById("resultsBody");
+            resultsBody.innerHTML = "";
+            
+            let tableHTML = "";
+            for (let i = 0; i < evaluations.length; i += 6) {
+                tableHTML += "<tr>";
+                for (let j = 0; j < 6; j++) {
+                    if (i + j < evaluations.length) {
+                        tableHTML += `<td>${evaluations[i + j]}</td>`;
+                    }
+                }
+                tableHTML += "</tr>";
+            }
+            
+            resultsBody.innerHTML = tableHTML;
+            document.getElementById("results").style.display = "block";
+            document.getElementById("submitBtn").style.display = "inline";
+        };
     
+        window.submitFinalization = function() {
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value;
+            const evaluations = getEvaluations().filter(e => e.score !== "N/A");
+    
+            if (name && age && evaluations.length === audioIds.length) {
+                addDoc(collection(db, "MUSHRA"), {
+                    name: name,
+                    age: age,
+                    evaluations: evaluations,
+                    timestamp: new Date()
+                })
+                .then(() => {
+                    alert("Dados enviados com sucesso!");
+                    window.location.href = "agradecimento.html";
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar dados: ", error);
+                    alert("Falha ao enviar dados.");
+                });
+            } else {
+                alert("Por favor, preencha todos os campos e avalie todos os áudios.");
+            }
+        };
+    </script>
 </body>
+
 </html>
