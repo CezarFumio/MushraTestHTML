@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Avaliação de Áudios</title>
+    <style>
+        /* Definições de estilo para o corpo da página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Estilo do título principal */
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Estilo dos parágrafos */
+        p {
+            color: #555;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 15px auto;
+            width: 80%;
+            line-height: 1.8;
+        }
+
+        /* Adicionando destaque em negrito para as palavras específicas */
+        b {
+            color: #2980b9;
+        }
+
+        /* Estilo para o container dos áudios */
+        #inputContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        /* Estilo para os áudios e controles */
+        .audio-container {
+            background-color: #ecf0f1;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para o título dos áudios */
+        .audio-container h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        /* Estilo para os botões */
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            margin: 30px auto;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilo para os sliders */
+        input[type="range"] {
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        /* Estilo para as labels de valores */
+        span {
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Teste de Avaliação de Áudios</h1>
+    <p>Avalie os áudios em uma escala de <b>0 a 100</b> com base na <b>qualidade</b>, <b>naturalidade</b> e <b>inteligibilidade</b>.</p>
+    <p>Considere o áudio de referência como <b>100</b> e o áudio sussurrado como <b>0</b>.</p>
+
+    <div class="audio-container" style="text-align: center; margin: 0 auto;">
+        <h3>Áudio de Referência</h3>
+        <audio controls>
+            <source src="audios/Original/SPM01/SPM01_44_01.wav" type="audio/wav">
+            Seu navegador não suporta o elemento de áudio.
+        </audio>
+    </div>
+
+    <div id="inputContainer"></div>
+
+
+
+    <script>
+        // Áudios e IDs
+        const audios = [
+            { src: "audios/KNN-VC/SPM01/SPM01_44_02_converted.wav", id: "KNN2" },
+            { src: "audios/LVC-VC/SPM01/SPM01_44_02_converted.wav", id: "LVC2" },
+            { src: "audios/Original/SPM01/SPM01_44_01.wav", id: "Original2" },
+            { src: "audios/TRIAAN-VC/SPM01/SPM01_44_02_converted.wav", id: "TRIAAN2" },
+            { src: "audios/WAV2VEC-VC/SPM01/SPM01_44_02_converted.wav", id: "WAV2VEC2" },
+            { src: "audios/source/SPM01/SPM01_44_02.wav", id: "Whisper2" }
+        ];
+    
+        // Função para embaralhar os áudios
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Troca os elementos
+            }
+        }
+    
+        // Embaralhar a ordem dos áudios
+        shuffleArray(audios);
+    
+        // Adicionar os áudios e sliders no container
+        audios.forEach((audio, index) => {
+            const audioContainer = document.createElement('div');
+            audioContainer.classList.add('audio-container');
+    
+            // Adicionar conteúdo do áudio
+            audioContainer.innerHTML = `
+                <h3>Áudio ${index+1}</h3>
+                <audio controls>
+                    <source src="${audio.src}" type="audio/wav">
+                    Seu navegador não suporta o elemento de áudio.
+                </audio>
+                <input type="range" id="inputNumber${audio.id}" min="0" max="100" step="1" value="50" oninput="updateValue('${audio.id}', this.value)">
+                <span id="numberValue${audio.id}">50</span>
+            `;
+            document.getElementById('inputContainer').appendChild(audioContainer);
+        });
+    
+        // Função dinâmica para atualizar os valores dos sliders
+        function updateValue(id, val) {
+            document.getElementById(`numberValue${id}`).textContent = val;
+            localStorage.setItem(id, val); // Salva o valor no localStorage com o ID do áudio
+        }
+    </script>
+    
+    <button onclick="goToFinalization()">Próxima</button>
+    
+    <script>
+        // Função para redirecionar para a página de finalização
+        function goToFinalization() {
+            window.location.href = "avaliacao3.html"; // Redireciona para a página de finalização
+        }
+    </script>
+    
+    
+</body>
+</html>

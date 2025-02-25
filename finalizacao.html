@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+    <style>
+        /* Definições de estilo para o corpo da página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Estilo do título principal */
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Estilo dos parágrafos */
+        p {
+            color: #555;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 15px auto;
+            width: 80%;
+            line-height: 1.8;
+        }
+
+        /* Adicionando destaque em negrito para as palavras específicas */
+        b {
+            color: #2980b9;
+        }
+
+        /* Estilo para o container dos áudios */
+        #inputContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        /* Estilo para os áudios e controles */
+        .audio-container {
+            background-color: #ecf0f1;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para o título dos áudios */
+        .audio-container h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        /* Estilo para os botões */
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            margin: 30px auto;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilo para os sliders */
+        input[type="range"] {
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        /* Estilo para as labels de valores */
+        span {
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalização da Avaliação</title>
+</head>
+<body>
+    <h1>Finalização da Avaliação</h1>
+    <p>Obrigado por participar do teste! Antes de finalizar, por favor, preencha suas informações abaixo.</p>
+
+    <form id="finalizationForm">
+        <label for="name">Nome Completo:</label>
+        <input type="text" id="name" required>
+        <br><br>
+        
+        <label for="age">Idade:</label>
+        <input type="number" id="age" required>
+        <br><br>
+
+        <button type="button" onclick="submitFinalization()">Concluir</button>
+    </form>
+
+    <script type="module">
+        // Função para enviar os dados para o Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgz_GEgyhfKqoKgkoiG6M1LU04DzhhzzA",
+            authDomain: "mushra-c4902.firebaseapp.com",
+            projectId: "mushra-c4902",
+            storageBucket: "mushra-c4902.firebasestorage.app",
+            messagingSenderId: "630758492117",
+            appId: "1:630758492117:web:c1038ff8af881878365f5c",
+            measurementId: "G-2MJDEHW2K2"
+        };
+    
+        // Inicializar o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        // Função para enviar todos os dados para o Firebase
+        window.submitFinalization = function() {
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+
+        // Função para obter as avaliações de um conjunto de áudios
+        function getEvaluations(audioIds) {
+            const evaluations = [];
+            audioIds.forEach((id) => {
+                const value = localStorage.getItem(id);
+                if (value !== null) {
+                    evaluations.push({ audio: id, score: value });
+                }
+            });
+            return evaluations;
+        }
+
+        // IDs para avaliação 1 até 2
+        const audioIds = [
+            ["KNN", "LVC", "Original", "TRIAAN", "WAV2VEC", "Whisper"], // Avaliação 1
+            ["KNN2", "LVC2", "Original2", "TRIAAN2", "WAV2VEC2", "Whisper2"], // Avaliação 2
+            ["KNN3", "LVC3", "Original3", "TRIAAN3", "WAV2VEC3", "Whisper3"], // Avaliação 3
+            ["KNN4", "LVC4", "Original4", "TRIAAN4", "WAV2VEC4", "Whisper4"], // Avaliação 4
+            ["KNN5", "LVC5", "Original5", "TRIAAN5", "WAV2VEC5", "Whisper5"], // Avaliação 5
+            ["KNN6", "LVC6", "Original6", "TRIAAN6", "WAV2VEC6", "Whisper6"]  // Avaliação 6
+        ];
+
+        // Coletar as avaliações para todas as 6 avaliações
+        const allEvaluations = audioIds.flatMap(getEvaluations);
+
+        // Verificar se todos os dados foram preenchidos
+        if (name && age && allEvaluations.length === audioIds.length * 6) {
+            // Enviar os dados para o Firebase
+            addDoc(collection(db, "MUSHRA"), {
+                name: name,
+                age: age,
+                evaluations: allEvaluations,
+                timestamp: new Date()
+            })
+            .then(() => {
+                alert("Dados enviados com sucesso!");
+                window.location.href = "agradecimento.html"; // Redireciona para a página de agradecimento
+            })
+            .catch((error) => {
+                console.error("Erro ao enviar dados: ", error);
+                alert("Falha ao enviar dados.");
+            });
+        } else {
+            alert("Por favor, preencha todos os campos e avalie todos os áudios.");
+        }
+    };
+
+    </script>
+    
+</body>
+</html>
