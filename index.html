@@ -1,55 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
+
+    <style>
+        /* Definições de estilo para o corpo da página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+        }
+
+        /* Estilo do título principal */
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Estilo dos parágrafos */
+        p {
+            color: #555;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 15px auto;
+            width: 80%;
+            line-height: 1.2;
+        }
+
+        /* Adicionando destaque em negrito para as palavras específicas */
+        b {
+            color: #2980b9;
+        }
+
+        /* Estilo para o container dos áudios */
+        #inputContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        /* Estilo para os áudios e controles */
+        .audio-container {
+            background-color: #ecf0f1;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para o título dos áudios */
+        .audio-container h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        /* Estilo para os botões */
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            margin: 30px auto;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilo para os sliders */
+        input[type="range"] {
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        /* Estilo para as labels de valores */
+        span {
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+    </style>
+    
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste Firebase</title>
+    <title>Termo de Consentimento</title>
 </head>
 <body>
-    <h1>Teste Simples Firebase</h1>
-    <input type="text" id="inputData" placeholder="Digite algo">
-    <button onclick="sendData()">Enviar para o Firebase</button>
+    <h1>Bem-vindo ao Ambiente de Testes de Conversão de Fala Sussurrada para Normal!</h1>
+    
+    <p>Este teste foi desenvolvido para avaliar a qualidade de tecnologias que convertem a fala sussurrada em fala normal.</p>
+    <p>Você ouvirá várias amostras de áudio, cada uma apresentando um método de conversão diferente, e você irá avaliar em uma escala de 0 a 100 com base na <b>qualidade</b>, <b>naturalidade</b> e <b>inteligibilidade</b>.</p>
+    <p>Para uma melhor experiência, recomendamos que o teste seja realizado em um <b>ambiente silencioso</b> e com <b>fone de ouvido</b></p>
+    <p>O teste levará menos 10 minutos</p>
+    <p>Você está participando de um teste de audição, e gostaríamos de armazenar suas respostas às perguntas a seguir.</p>
+    
+    <p><b>Você consente com isso?</b></p>
 
-    <!-- Scripts do Firebase com tipo module -->
-    <script type="module">
-        // Importando as funções necessárias do Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    <button onclick="startEvaluation()" aria-label="Iniciar avaliação">Eu concordo</button>
+    <button onclick="declineConsent()" aria-label="Cancelar consentimento">Não concordo</button>
 
-        // Sua configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDgz_GEgyhfKqoKgkoiG6M1LU04DzhhzzA",
-            authDomain: "mushra-c4902.firebaseapp.com",
-            projectId: "mushra-c4902",
-            storageBucket: "mushra-c4902.firebasestorage.app",
-            messagingSenderId: "630758492117",
-            appId: "1:630758492117:web:c1038ff8af881878365f5c",
-            measurementId: "G-2MJDEHW2K2"
-        };
 
-        // Inicializando o Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    <script>
+        function startEvaluation() {
+            window.location.href = "avaliacao1.html"; // Redireciona para a página de avaliação
+        }
 
-        // Tornando a função sendData acessível globalmente
-        window.sendData = function() {
-            const inputValue = document.getElementById("inputData").value;
-            if (inputValue) {
-                addDoc(collection(db, "testCollection"), {
-                    testData: inputValue,
-                    timestamp: new Date()
-                })
-                .then(() => {
-                    alert("Dados enviados com sucesso!");
-                })
-                .catch((error) => {
-                    console.error("Erro ao enviar dados: ", error);
-                    alert("Falha ao enviar dados.");
-                });
-            } else {
-                alert("Por favor, digite algo.");
-            }
-        };
+        function declineConsent() {
+            alert("Você optou por não participar. Você será redirecionado.");
+            window.location.href = "https://www.google.com"; // Redireciona para outro local caso não aceite
+        }
     </script>
 </body>
 </html>
